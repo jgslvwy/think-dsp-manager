@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>创建迁移任务</title>
+    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="css/layer.css" type="text/css" rel="stylesheet">
+    <link href="css/layout.css" type="text/css" rel="stylesheet">
+    <script src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.serializejson.js"></script>
+</head>
+<h1>源库信息</h1>
+<div>
+    <form id="souceForm">
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>数据库类型</th>
+                <td><input type="text" name="type" class="form-control" id="type"/></td>
+            </tr>
+            <tr>
+                <th>连接名</th>
+                <td><input type="text" name="username" class="form-control" id="username"/></td>
+            </tr>
+            <tr>
+                <th>口令</th>
+                <td><input type="password" name="password" class="form-control" id="password"/></td>
+            </tr>
+            <tr>
+                <th>主机名</th>
+                <td><input type="text" name="url" class="form-control" id="url"/></td>
+            </tr>
+            <tr>
+                <th>端口号</th>
+                <td><input type="text" name="portNo" class="form-control" id="portNo"/></td>
+            </tr>
+            <tr>
+                <th>服务名</th>
+                <td><input type="text" name="sid" class="form-control" id="sid"/></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input id="sourceId" type="button" value="测试连接" class="btn btn-info"
+                           onclick="testConn('souceForm');"/>
+                    <span id="showTextSource"></span>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div>
+    <form id="targetForm">
+        <h1>目标库信息</h1>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>数据库类型</th>
+                <td><input type="text" name="type" class="form-control" id="ttype"/></td>
+            </tr>
+            <tr>
+                <th>连接名</th>
+                <td><input type="text" name="username" class="form-control" id="tusername"/></td>
+            </tr>
+            <tr>
+                <th>口令</th>
+                <td><input type="password" name="password" class="form-control" id="tpassword"/></td>
+            </tr>
+            <tr>
+                <th>主机名</th>
+                <td><input type="text" name="url" class="form-control" id="turl"/></td>
+            </tr>
+            <tr>
+                <th>端口号</th>
+                <td><input type="text" name="portNo" class="form-control" id="tportNo"/></td>
+            </tr>
+            <tr>
+                <th>服务名</th>
+                <td><input type="text" name="sid" class="form-control" id="tsid"/></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input id="targetId" type="button" value="测试连接" class="btn btn-info"
+                           onclick="testConn('targetForm');"/>
+                    <span id="showTextTar"></span>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!--数据库多选框，如果增量选择该选项-->
+<div><input>选择类型</input> <input id="" type="" value="">选择表</input></div>
+</div>
+
+<script type="text/javascript">
+    function testConn(souceForm) {
+        var showText = "";
+        if (souceForm == "targetForm")
+            showText = document.getElementById("showTextSource");
+        else
+            showText = document.getElementById("showTextTar");
+        $.ajax({
+            type: "POST",
+            contentType: "application/json",
+            datatype: "json",
+            url: "http://localhost:8080/v1/db/check",
+            data: JSON.stringify($('#' + souceForm).serializeJSON()),
+            success: function (result) {
+                if (result) {
+                    console.info(result);
+                    showText.style.display = "block";
+                    showText.style.color = "green";
+                    showText.innerHTML = "连接成功";
+                } else {
+                    // $("#sourceId").val("连接失败");
+                    showText.style.display = "block";
+                    showText.style.color = "red";
+                    showText.innerHTML = "连接失败，请检查";
+                }
+            },
+            error: function () {
+                alert("异常！");
+            }
+        });
+    }
+</script>
+<script src="js/layer.js"></script>
+<script>
+    var index = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+    //loading层
+    var index = layer.load(1, {
+        shade: [0.4, '#000'], //0.1透明度的白色背景
+        time: 1500
+    });
+</script>
+</body>
+</html>
