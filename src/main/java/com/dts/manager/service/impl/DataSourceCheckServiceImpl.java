@@ -11,25 +11,26 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class DataSourceCheckServiceImpl implements DataSourceCheckService {
-    @Autowired
-    private DataSourceCheckRepository dataSourceCheckRepository;
 
-    @Override
-    public Mono<DataSourceConfig> findBySchemaName(String username) {
-        return dataSourceCheckRepository.findByUsername(username);
-    }
+  @Autowired
+  private DataSourceCheckRepository dataSourceCheckRepository;
 
-    @Override
-    public Flux<DataSourceConfig> listDataSources(String dbType) {
-        return dataSourceCheckRepository.findAllByType(dbType);
-    }
+  @Override
+  public Mono<DataSourceConfig> findBySchemaName(String username) {
+    return dataSourceCheckRepository.findByUsername(username);
+  }
 
-    @Override
-    public Mono<Boolean> checkDataSourceConn(DataSourceConfig dataSourceConfig) {
-        Boolean connSuccess = JdbcUtils.isConnSuccess(dataSourceConfig);
-        if (connSuccess) {
-            dataSourceCheckRepository.save(dataSourceConfig);
-        }
-        return Mono.just(connSuccess);
+  @Override
+  public Flux<DataSourceConfig> listDataSources(String dbType) {
+    return dataSourceCheckRepository.findAllByType(dbType);
+  }
+
+  @Override
+  public Mono<Boolean> checkDataSourceConn(DataSourceConfig dataSourceConfig) {
+    Boolean connSuccess = JdbcUtils.isConnSuccess(dataSourceConfig);
+    if (connSuccess) {
+      dataSourceCheckRepository.save(dataSourceConfig);
     }
+    return Mono.just(connSuccess);
+  }
 }
